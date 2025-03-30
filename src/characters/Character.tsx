@@ -1,11 +1,17 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import CharacterAttribute from './CharacterAttribute';
-import {ATTRIBUTE_LIST, CLASS_LIST} from '../consts';
+import {ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST} from '../consts';
 import CharacterClass from './CharacterClass';
+import SkillComponent from './Skill';
 import {Attributes, Class} from '../types';
 
 
 interface Attribute {
+  name: string;
+  value: number;
+}
+
+interface Skill {
   name: string;
   value: number;
 }
@@ -25,6 +31,16 @@ function calculateModifier(attributeValue: number): number {
   return Math.floor((attributeValue - 10) / 2)
 }
 
+function calculateSkillModifier(skill: Skill, attributes: Attribute[]): number {
+  return Math.max(calculateModifier(
+    attributes.find(
+      attr => attr.name === SKILL_LIST.find(
+        s => s.name === skill.name
+      ).attributeModifier
+    ).value
+  ), 0);
+}
+
 
 export default function Character(): React.ReactElement {
   const [selectedClass, setSelectedClass] = useState<Class>();
@@ -37,6 +53,17 @@ export default function Character(): React.ReactElement {
       }
     })
   );
+
+  const [skillPoints, setSkillPoints] = useState<Skill[]>(SKILL_LIST.map(skill => {
+    return {
+      name: skill.name,
+      value: 0,
+    }
+  }))
+
+  const availablePoints = useMemo(() => {
+    return Math.max(10 + 4 * calculateModifier(attributes.find(attr => attr.name === 'Intelligence').value), 0);
+  }, [attributes]);
 
   const onAttributeChange = useCallback((name: string, value: number) => {
     setAttributes(attrs => attrs.map((attr) => {
@@ -82,6 +109,36 @@ export default function Character(): React.ReactElement {
           }
         </div>
       )}
+      <div>
+        <h3>Skills</h3>
+        <div>Total skill points available: {availablePoints}</div>
+        {skillPoints.map((skill) => (
+          <SkillComponent
+            name={skill.name}
+            value={skill.value}
+            modifierName={SKILL_LIST.find(s => s.name === skill.name).attributeModifier}
+            modifierValue={calculateSkillModifier(skill, attributes)}
+            pointsAvailable={availablePoints > skillPoints.reduce((agg, skillPoint) => agg + skillPoint.value, 0)}
+            onIncrement={() => setSkillPoints(skills => skills.map(s => {
+              if (s.name === skill.name) {
+                return {
+                  name: s.name,
+                  value: s.value + 1
+                }
+              }
+              return s;
+            }))}
+            onDecrement={() => setSkillPoints(skills => skills.map(s => {
+              if (s.name === skill.name) {
+                return {
+                  name: s.name,
+                  value: s.value - 1
+                }
+              }
+              return s;
+            }))} />
+        ))}
+      </div>
     </div>
   )
 }
