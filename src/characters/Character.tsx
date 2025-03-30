@@ -2,7 +2,7 @@ import React, {useCallback, useState} from 'react';
 import CharacterAttribute from './CharacterAttribute';
 import {ATTRIBUTE_LIST, CLASS_LIST} from '../consts';
 import CharacterClass from './CharacterClass';
-import {Attributes} from '../types';
+import {Attributes, Class} from '../types';
 
 
 interface Attribute {
@@ -22,6 +22,7 @@ function attrListToObject(attributes: Attribute[]): { [attributeName: string]: n
 
 
 export default function Character(): React.ReactElement {
+  const [selectedClass, setSelectedClass] = useState<Class>();
 
   const [attributes, setAttributes] = useState<Attribute[]>(
     ATTRIBUTE_LIST.map((attribute) => {
@@ -58,11 +59,21 @@ export default function Character(): React.ReactElement {
         ))}
       </div>
       <h3>Character Classes</h3>
-      {Object.keys(CLASS_LIST).map((className) => (
+      {Object.keys(CLASS_LIST).map((className: Class) => (
           <CharacterClass
-            className={className} attributeValues={attrListToObject(attributes)} classMinimums={CLASS_LIST[className]}
+            className={className}
+            attributeValues={attrListToObject(attributes)}
+            classMinimums={CLASS_LIST[className]}
+            onClick={() => setSelectedClass((curClassName) => curClassName === className ? undefined : className)}
           />
         )
+      )}
+      {selectedClass !== undefined && (
+        <div>
+          <h3>Class Requirement</h3>
+          {Object.keys(CLASS_LIST[selectedClass]).map(attr => (<div>{attr}: {CLASS_LIST[selectedClass][attr]}</div>))
+          }
+        </div>
       )}
     </div>
   )

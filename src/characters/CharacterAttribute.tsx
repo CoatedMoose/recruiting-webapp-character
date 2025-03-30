@@ -7,7 +7,13 @@ interface Props {
   onValueChange: (value: number) => void;
 }
 
-export default function CharacterAttribute({attributeName, initialAttributeValue, onValueChange}: Props): React.ReactElement {
+export default function CharacterAttribute(
+  {
+    attributeName,
+    initialAttributeValue,
+    onValueChange
+  }: Props): React.ReactElement {
+
   const [attributeValue, setAttributeValue] = useState<number>(initialAttributeValue);
 
   useEffect(() => {

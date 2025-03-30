@@ -7,7 +7,14 @@ interface Props {
   onDecrement: () => void;
 }
 
-export default function CharacterAttributeView({attributeName, attributeValue, onIncrement, onDecrement}: Props): React.ReactElement {
+export default function CharacterAttributeView(
+  {
+    attributeName,
+    attributeValue,
+    onIncrement,
+    onDecrement
+  }: Props): React.ReactElement {
+
   return (
     <div>
       {attributeName}:{attributeValue}
