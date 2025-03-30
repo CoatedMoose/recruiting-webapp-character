@@ -4,6 +4,7 @@ import CharacterAttributeView from './CharacterAttributeView';
 interface Props {
   attributeName: string;
   initialAttributeValue: number;
+  modifierValue: number;
   onValueChange: (value: number) => void;
 }
 
@@ -11,6 +12,7 @@ export default function CharacterAttribute(
   {
     attributeName,
     initialAttributeValue,
+    modifierValue,
     onValueChange
   }: Props): React.ReactElement {
 
@@ -24,6 +26,7 @@ export default function CharacterAttribute(
     <CharacterAttributeView
       attributeName={attributeName}
       attributeValue={attributeValue}
+      attributeModifier={modifierValue}
       onIncrement={() => setAttributeValue(curVal => curVal + 1)}
       onDecrement={() => setAttributeValue(curVal => curVal - 1)}
     />

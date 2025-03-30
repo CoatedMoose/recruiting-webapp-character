@@ -20,6 +20,11 @@ function attrListToObject(attributes: Attribute[]): { [attributeName: string]: n
   }), {});
 }
 
+function calculateModifier(attributeValue: number): number {
+  // Spec doesn't specify behaviour for 8, 6, etc, but this is probably correct (8 gives -1, 6 gives -2, etc)
+  return Math.floor((attributeValue - 10) / 2)
+}
+
 
 export default function Character(): React.ReactElement {
   const [selectedClass, setSelectedClass] = useState<Class>();
@@ -54,6 +59,7 @@ export default function Character(): React.ReactElement {
             key={attribute.name}
             attributeName={attribute.name}
             initialAttributeValue={attribute.value}
+            modifierValue={calculateModifier(attribute.value)}
             onValueChange={(value) => onAttributeChange(attribute.name, value)}
           />
         ))}
@@ -70,6 +76,7 @@ export default function Character(): React.ReactElement {
       )}
       {selectedClass !== undefined && (
         <div>
+          { /* This isn't really associated with any specific character, but associating it with the character is consistent with the provided video */}
           <h3>Class Requirement</h3>
           {Object.keys(CLASS_LIST[selectedClass]).map(attr => (<div>{attr}: {CLASS_LIST[selectedClass][attr]}</div>))
           }
