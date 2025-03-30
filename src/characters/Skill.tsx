@@ -1,4 +1,3 @@
-import {SKILL_LIST} from '../consts';
 import React from 'react';
 
 interface Props {
